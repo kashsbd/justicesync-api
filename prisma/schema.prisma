@@ -1,0 +1,122 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(uuid())
+
+  email    String @unique
+  password String
+
+  salutation       String
+  firstName        String
+  lastName         String
+  initials         String
+  roleType         String
+  globalHourlyRate Decimal @db.Decimal(10, 2) // Define the precision and scale
+  phno             String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  active    Boolean  @default(true)
+}
+
+model Address {
+  id         String  @id @default(uuid())
+  addressOne String
+  addressTwo String?
+  city       String
+  state      String
+  postalCode String
+  country    String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  active    Boolean  @default(true)
+}
+
+model Client {
+  id String @id @default(uuid())
+
+  type                       String
+  companyName                String?
+  businessRegistrationNumber String?
+  idCardNumber               String?
+  dateOfBirth                DateTime?
+
+  salutation             String
+  firstName              String
+  lastName               String
+  fax                    String?
+  email                  String
+  phno                   String
+  createdById            String
+  referredById           String
+  createDate             DateTime
+  note                   String?
+  postalAddressId        String
+  isSameAsBillingAddress Boolean  @default(true)
+  billdingAddressId      String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  active    Boolean  @default(true)
+}
+
+model Case {
+  id String @id @default(uuid())
+
+  courtCaseNumber String?
+  caseName        String
+  isCaseBillable  Boolean @default(true)
+  caseDescription String?
+
+  clientId            String
+  responsibleLawyerId String
+  originatingLawyerId String
+  secretaryInChargeId String
+
+  isCaseOpen   Boolean  @default(true)
+  caseOpenDate DateTime
+
+  email                  String
+  phno                   String
+  createdById            String
+  referredById           String
+  createDate             DateTime
+  note                   String?
+  postalAddressId        String
+  isSameAsBillingAddress Boolean  @default(true)
+  billdingAddressId      String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  active    Boolean  @default(true)
+}
+
+model TimeEntry {
+  id String @id @default(uuid())
+
+  caseId         String
+  userId         String
+  createdDate    DateTime
+  activityCode   String
+  clockedHours   Int
+  clockedMinutes Int
+  billedHours    Int
+  billedMinutes  Int
+
+  servicePerformedDescription String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  active    Boolean  @default(true)
+}

@@ -1,9 +1,21 @@
 const express = require("express");
 
+const authRouter = require("./src/routes/auth.route");
+const userRouter = require("./src/routes/user.route");
+const clientRouter = require("./src/routes/client.route");
+const caseRouter = require("./src/routes/case.route");
+const timeentryRouter = require("./src/routes/timeentry.route");
+
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use("/auth", authRouter);
+app.use("/users", userRouter);
+app.use("/clients", clientRouter);
+app.use("/cases", caseRouter);
+app.use("/timeentries", timeentryRouter);
 
 app.use((req, res, next) => {
   const error = new Error("Not found");

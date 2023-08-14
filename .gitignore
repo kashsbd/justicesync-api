@@ -22,9 +22,9 @@ dist/
 build/
 
 # dotenv environment variable files
-.env
 .env.local
 .env.production
+.env.development
 .env.test
 
 # macOS
