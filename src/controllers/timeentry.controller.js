@@ -28,5 +28,6 @@ exports.createTimeEntry = async (req, res) => {
 };
 
 exports.deleteTimeEntry = async (req, res) => {
+  const { id } = req.params;
   return create200Response(res, {});
 };

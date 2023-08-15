@@ -2,6 +2,7 @@ const {
   create400Response,
   create500Response,
   create201Response,
+  create200Response
 } = require("../utils/responseFuns");
 const $prisma = require("../lib/$prisma");
 const { userRole } = require("../utils/constants");
@@ -55,5 +56,6 @@ exports.createUser = async (req, res) => {
 };
 
 exports.deleteUser = async (req, res) => {
+  const { id } = req.params;
   return create200Response(res, []);
 };

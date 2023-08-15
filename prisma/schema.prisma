@@ -76,7 +76,7 @@ model Client {
   referredBy   User?  @relation("referredBy", fields: [referredById], references: [id])
   referredById String @unique
 
-  createDate             DateTime
+  createDate             String
   note                   String?
   isSameAsBillingAddress Boolean  @default(true)
 
@@ -113,7 +113,7 @@ model Case {
   secretaryInChargeId String @unique
 
   isCaseOpen   Boolean  @default(true)
-  caseOpenDate DateTime
+  caseOpenDate String
 
   timeEntries TimeEntry[]
 
@@ -131,7 +131,7 @@ model TimeEntry {
   staff   User?  @relation(fields: [staffId], references: [id])
   staffId String @unique
 
-  createdDate    DateTime
+  createdDate    String
   activityCode   String
   clockedHours   Int
   clockedMinutes Int

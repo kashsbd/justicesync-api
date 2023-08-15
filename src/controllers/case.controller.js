@@ -71,5 +71,6 @@ exports.createCase = async (req, res) => {
 };
 
 exports.deleteCase = async (req, res) => {
+  const { id } = req.params;
   return create200Response(res, {});
 };
