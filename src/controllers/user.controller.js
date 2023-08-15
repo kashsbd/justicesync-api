@@ -10,8 +10,8 @@ exports.getAllUser = async (req, res) => {
   return create200Response(res, []);
 };
 
-exports.register = async (req, res) => {
-  const { phno, password, name } = req.body;
+exports.createUser = async (req, res) => {
+  const { email, password, name } = req.body;
 
   if (typeof phno !== "string") {
     return create400Response(res, "phno must be string.");

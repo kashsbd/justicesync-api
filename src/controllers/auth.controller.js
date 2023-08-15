@@ -11,6 +11,7 @@ const {
   generateAccessToken,
   generateRefreshToken,
 } = require("../utils/jwtUtils");
+const { exclude } = require("../utils/functions");
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;
@@ -24,19 +25,22 @@ exports.login = async (req, res) => {
 
   try {
     const loggedInUser = await $prisma.user.findFirst({
-      where: { email, password },
-      select: {
-        id: true,
-        email: true,
-        phno: true,
-      },
+      where: { email, password, active: true },
     });
     if (loggedInUser) {
-      const accessToken = generateAccessToken(loggedInUser.id);
+      const loggedInUserWithoutPassword = exclude(loggedInUser, [
+        "password",
+        "active",
+      ]);
+      const accessToken = generateAccessToken(loggedInUserWithoutPassword.id);
 
-      const refreshToken = generateRefreshToken(loggedInUser.id);
+      const refreshToken = generateRefreshToken(loggedInUserWithoutPassword.id);
 
-      const response = { ...loggedInUser, accessToken, refreshToken };
+      const response = {
+        ...loggedInUserWithoutPassword,
+        accessToken,
+        refreshToken,
+      };
 
       return create200Response(res, response);
     } else {

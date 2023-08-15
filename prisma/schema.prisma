@@ -19,10 +19,19 @@ model User {
   salutation       String
   firstName        String
   lastName         String
-  initials         String
+  initials         String?
   roleType         String
   globalHourlyRate Decimal @db.Decimal(10, 2) // Define the precision and scale
   phno             String
+
+  clientForCreatedBy  Client? @relation("createdBy")
+  clientForReferredBy Client? @relation("referredBy")
+
+  caseForResponsibleLawyer Case? @relation("responsibleLawyer")
+  caseForOriginatingLawyer Case? @relation("originatingLawyer")
+  caseForSecretaryInCharge Case? @relation("secretaryInCharge")
+
+  TimeEntry TimeEntry?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -38,6 +47,9 @@ model Address {
   postalCode String
   country    String
 
+  clientForPostalAddress  Client? @relation("postalAddress")
+  clientForBillingAddress Client? @relation("buildingAddress")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   active    Boolean  @default(true)
@@ -52,19 +64,28 @@ model Client {
   idCardNumber               String?
   dateOfBirth                DateTime?
 
-  salutation             String
-  firstName              String
-  lastName               String
-  fax                    String?
-  email                  String
-  phno                   String
-  createdById            String
-  referredById           String
+  salutation String
+  firstName  String
+  lastName   String
+  fax        String?
+  email      String
+  phno       String
+
+  createdBy    User?  @relation("createdBy", fields: [createdById], references: [id])
+  createdById  String @unique
+  referredBy   User?  @relation("referredBy", fields: [referredById], references: [id])
+  referredById String @unique
+
   createDate             DateTime
   note                   String?
-  postalAddressId        String
   isSameAsBillingAddress Boolean  @default(true)
-  billdingAddressId      String?
+
+  postalAddress     Address? @relation("postalAddress", fields: [postalAddressId], references: [id])
+  postalAddressId   String   @unique
+  buildingAddress   Address? @relation("buildingAddress", fields: [billdingAddressId], references: [id])
+  billdingAddressId String?  @unique
+
+  cases Case[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -79,23 +100,22 @@ model Case {
   isCaseBillable  Boolean @default(true)
   caseDescription String?
 
-  clientId            String
-  responsibleLawyerId String
-  originatingLawyerId String
-  secretaryInChargeId String
+  client   Client? @relation(fields: [clientId], references: [id])
+  clientId String
+
+  responsibleLawyer   User?  @relation("responsibleLawyer", fields: [responsibleLawyerId], references: [id])
+  responsibleLawyerId String @unique
+
+  originatingLawyer   User?  @relation("originatingLawyer", fields: [originatingLawyerId], references: [id])
+  originatingLawyerId String @unique
+
+  secretaryInCharge   User?  @relation("secretaryInCharge", fields: [secretaryInChargeId], references: [id])
+  secretaryInChargeId String @unique
 
   isCaseOpen   Boolean  @default(true)
   caseOpenDate DateTime
 
-  email                  String
-  phno                   String
-  createdById            String
-  referredById           String
-  createDate             DateTime
-  note                   String?
-  postalAddressId        String
-  isSameAsBillingAddress Boolean  @default(true)
-  billdingAddressId      String?
+  timeEntries TimeEntry[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -105,8 +125,12 @@ model Case {
 model TimeEntry {
   id String @id @default(uuid())
 
-  caseId         String
-  userId         String
+  case   Case?  @relation(fields: [caseId], references: [id])
+  caseId String
+
+  staff   User?  @relation(fields: [staffId], references: [id])
+  staffId String @unique
+
   createdDate    DateTime
   activityCode   String
   clockedHours   Int
