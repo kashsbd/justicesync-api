@@ -24,14 +24,14 @@ model User {
   globalHourlyRate Decimal @db.Decimal(10, 2) // Define the precision and scale
   phno             String
 
-  clientForCreatedBy  Client? @relation("createdBy")
-  clientForReferredBy Client? @relation("referredBy")
+  clientForCreatedBy  Client[] @relation("createdBy")
+  clientForReferredBy Client[] @relation("referredBy")
 
-  caseForResponsibleLawyer Case? @relation("responsibleLawyer")
-  caseForOriginatingLawyer Case? @relation("originatingLawyer")
-  caseForSecretaryInCharge Case? @relation("secretaryInCharge")
+  caseForResponsibleLawyer Case[] @relation("responsibleLawyer")
+  caseForOriginatingLawyer Case[] @relation("originatingLawyer")
+  caseForSecretaryInCharge Case[] @relation("secretaryInCharge")
 
-  TimeEntry TimeEntry?
+  TimeEntry TimeEntry[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -62,7 +62,7 @@ model Client {
   companyName                String?
   businessRegistrationNumber String?
   idCardNumber               String?
-  dateOfBirth                DateTime?
+  dateOfBirth                String?
 
   salutation String
   firstName  String
@@ -72,13 +72,13 @@ model Client {
   phno       String
 
   createdBy    User?  @relation("createdBy", fields: [createdById], references: [id])
-  createdById  String @unique
+  createdById  String
   referredBy   User?  @relation("referredBy", fields: [referredById], references: [id])
-  referredById String @unique
+  referredById String
 
   createDate             String
   note                   String?
-  isSameAsBillingAddress Boolean  @default(true)
+  isSameAsBillingAddress Boolean @default(true)
 
   postalAddress     Address? @relation("postalAddress", fields: [postalAddressId], references: [id])
   postalAddressId   String   @unique
@@ -104,15 +104,15 @@ model Case {
   clientId String
 
   responsibleLawyer   User?  @relation("responsibleLawyer", fields: [responsibleLawyerId], references: [id])
-  responsibleLawyerId String @unique
+  responsibleLawyerId String
 
   originatingLawyer   User?  @relation("originatingLawyer", fields: [originatingLawyerId], references: [id])
-  originatingLawyerId String @unique
+  originatingLawyerId String
 
   secretaryInCharge   User?  @relation("secretaryInCharge", fields: [secretaryInChargeId], references: [id])
-  secretaryInChargeId String @unique
+  secretaryInChargeId String
 
-  isCaseOpen   Boolean  @default(true)
+  isCaseOpen   Boolean @default(true)
   caseOpenDate String
 
   timeEntries TimeEntry[]
@@ -129,7 +129,7 @@ model TimeEntry {
   caseId String
 
   staff   User?  @relation(fields: [staffId], references: [id])
-  staffId String @unique
+  staffId String
 
   createdDate    String
   activityCode   String

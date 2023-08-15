@@ -2,7 +2,7 @@ const {
   create200Response,
   create400Response,
   create500Response,
-  create401Response,
+  create201Response,
 } = require("../utils/responseFuns");
 const $prisma = require("../lib/$prisma");
 
@@ -67,10 +67,83 @@ exports.getAllCase = async (req, res) => {
 };
 
 exports.createCase = async (req, res) => {
-  return create200Response(res, {});
+  const body = ({
+    courtCaseNumber,
+    caseName,
+    isCaseBillable = true,
+    caseDescription = "",
+    clientId,
+    responsibleLawyerId,
+    originatingLawyerId,
+    secretaryInChargeId,
+    isCaseOpen = true,
+    caseOpenDate,
+  } = req.body);
+
+  if (!caseName) {
+    return create400Response(res, "please provice caseName.");
+  }
+
+  if (!clientId) {
+    return create400Response(res, "please provice clientId.");
+  }
+
+  if (!responsibleLawyerId) {
+    return create400Response(res, "please provice responsibleLawyerId.");
+  }
+
+  if (!originatingLawyerId) {
+    return create400Response(res, "please provice originatingLawyerId.");
+  }
+
+  if (!secretaryInChargeId) {
+    return create400Response(res, "please provice secretaryInChargeId.");
+  }
+
+  if (!caseOpenDate) {
+    return create400Response(res, "please provice caseOpenDate.");
+  }
+
+  try {
+    const createdCase = await $prisma.case.create({
+      data: {
+        ...body,
+      },
+    });
+
+    return create201Response(res, createdCase);
+  } catch (error) {
+    console.log(error.message);
+    return create500Response(res, error);
+  }
 };
 
 exports.deleteCase = async (req, res) => {
   const { id } = req.params;
-  return create200Response(res, {});
+
+  try {
+    const selectedCase = await $prisma.case.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!selectedCase) {
+      return create400Response(res, "case does not exists with given Id.");
+    }
+
+    const updatedCase = await $prisma.case.update({
+      where: {
+        id: id,
+      },
+      data: {
+        active: false,
+      },
+    });
+
+    return create200Response(res, updatedCase);
+  } catch (error) {
+    console.log(error.message);
+    return create500Response(res, error);
+  }
 };
