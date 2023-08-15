@@ -185,7 +185,7 @@ exports.deleteClient = async (req, res) => {
   try {
     const selectedClient = await $prisma.client.findUnique({
       where: {
-        id,
+        id: id,
       },
     });
 
