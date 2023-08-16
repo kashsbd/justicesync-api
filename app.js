@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 
 const authRouter = require("./src/routes/auth.route");
 const userRouter = require("./src/routes/user.route");
@@ -8,6 +9,7 @@ const timeentryRouter = require("./src/routes/timeentry.route");
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
