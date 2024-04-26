@@ -1,0 +1,58 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs
+logs
+*.log
+
+# Dependency directories
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# TypeScript
+*.tsbuildinfo
+
+# Optional: Dist and build directories
+dist/
+build/
+
+# dotenv environment variable files
+.env.local
+.env.production
+.env.development
+.env.test
+
+# macOS
+.DS_Store
+
+# Editor-specific files
+.idea/
+.vscode/
+
+# Cache and compiled files for various tools
+*.svelte
+*.cache/
+.cached/
+public/__sapper__/
+.sass-cache/
+.nyc_output/
+coverage/
+lib-cov/
+*.pnp.js
+.pnp.js.map
+
+# Jest coverage
+coverage/
+
+# Yarn v2
+.yarn/*
+!.yarn/cache
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+.pnp.*

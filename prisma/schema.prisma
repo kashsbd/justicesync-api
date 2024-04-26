@@ -1,0 +1,146 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(uuid())
+
+  email    String @unique
+  password String
+
+  salutation       String
+  firstName        String
+  lastName         String
+  initials         String?
+  roleType         String
+  globalHourlyRate Decimal @db.Decimal(10, 2) // Define the precision and scale
+  phno             String
+
+  clientForCreatedBy  Client[] @relation("createdBy")
+  clientForReferredBy Client[] @relation("referredBy")
+
+  caseForResponsibleLawyer Case[] @relation("responsibleLawyer")
+  caseForOriginatingLawyer Case[] @relation("originatingLawyer")
+  caseForSecretaryInCharge Case[] @relation("secretaryInCharge")
+
+  TimeEntry TimeEntry[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  active    Boolean  @default(true)
+}
+
+model Address {
+  id         String  @id @default(uuid())
+  addressOne String
+  addressTwo String?
+  city       String
+  state      String
+  postalCode String
+  country    String
+
+  clientForPostalAddress  Client? @relation("postalAddress")
+  clientForBillingAddress Client? @relation("buildingAddress")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  active    Boolean  @default(true)
+}
+
+model Client {
+  id String @id @default(uuid())
+
+  type                       String
+  companyName                String?
+  businessRegistrationNumber String?
+  idCardNumber               String?
+  dateOfBirth                String?
+
+  salutation String
+  firstName  String
+  lastName   String
+  fax        String?
+  email      String
+  phno       String
+
+  createdBy    User?  @relation("createdBy", fields: [createdById], references: [id])
+  createdById  String
+  referredBy   User?  @relation("referredBy", fields: [referredById], references: [id])
+  referredById String
+
+  createDate             String
+  note                   String?
+  isSameAsBillingAddress Boolean @default(true)
+
+  postalAddress     Address? @relation("postalAddress", fields: [postalAddressId], references: [id])
+  postalAddressId   String   @unique
+  buildingAddress   Address? @relation("buildingAddress", fields: [billdingAddressId], references: [id])
+  billdingAddressId String?  @unique
+
+  cases Case[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  active    Boolean  @default(true)
+}
+
+model Case {
+  id String @id @default(uuid())
+
+  courtCaseNumber String?
+  caseName        String
+  isCaseBillable  Boolean @default(true)
+  caseDescription String?
+
+  client   Client? @relation(fields: [clientId], references: [id])
+  clientId String
+
+  responsibleLawyer   User?  @relation("responsibleLawyer", fields: [responsibleLawyerId], references: [id])
+  responsibleLawyerId String
+
+  originatingLawyer   User?  @relation("originatingLawyer", fields: [originatingLawyerId], references: [id])
+  originatingLawyerId String
+
+  secretaryInCharge   User?  @relation("secretaryInCharge", fields: [secretaryInChargeId], references: [id])
+  secretaryInChargeId String
+
+  isCaseOpen   Boolean @default(true)
+  caseOpenDate String
+
+  timeEntries TimeEntry[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  active    Boolean  @default(true)
+}
+
+model TimeEntry {
+  id String @id @default(uuid())
+
+  case   Case?  @relation(fields: [caseId], references: [id])
+  caseId String
+
+  staff   User?  @relation(fields: [staffId], references: [id])
+  staffId String
+
+  createdDate    String
+  activityCode   String
+  clockedHours   Int
+  clockedMinutes Int
+  billedHours    Int
+  billedMinutes  Int
+
+  servicePerformedDescription String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  active    Boolean  @default(true)
+}
